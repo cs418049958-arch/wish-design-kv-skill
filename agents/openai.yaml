@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design KV Skill"
+  short_description: "Create structured, Image2-ready Chinese KV prompts with sensitive wording neutralized."
+  default_prompt: "Use $design-kv-skill to turn this campaign brief into a structured Image2-ready Chinese KV prompt with sensitive wording neutralized."
