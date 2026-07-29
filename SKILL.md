@@ -1,13 +1,13 @@
 ---
 name: wish-design-kv-skill
-description: Create concise, production-ready Chinese KV image prompts from campaign briefs, planning screenshots, PPT drafts, ecommerce activity notes, or loose brand requests. Handles ecommerce KV, campaign posters, livestream backgrounds, banners, activity pages, and product promotion images. Bind every product entity in the final prompt to its reference image with wording such as "图1的产品合集", "图1的产品", or "图1的三瓶产品". Automatically neutralizes sensitive wording for Image2 compatibility. Output prompts only unless the user explicitly asks to generate an image.
+description: Create production-ready Chinese Image2 prompts from campaign briefs, planning screenshots, PPT drafts, ecommerce activity notes, or loose brand requests. Use the dedicated planning-to-prompt workflow for ecommerce PDP/detail-page screens, including single screens, long-page sections, feature explanation screens, proof screens, and scenario screens. Keep the original structured format for ecommerce KV, campaign posters, main images, promotion images, livestream backgrounds, banners, and activity-page hero visuals. Bind every product entity to its reference image and automatically neutralize incompatible wording. Output prompts only unless the user explicitly asks to generate an image.
 ---
 
 # Wish Design KV Skill
 
 ## Core Task
 
-Convert rough campaign material — screenshots, PPT drafts, text briefs, activity notes — into concise, production-ready Chinese image prompts. Treat all planning references as directional input, not final visual targets. Strip spreadsheet grids, PPT annotations, placeholders, arrows, and draft styling from the output.
+Convert rough campaign material — screenshots, PPT drafts, text briefs, activity notes — into concise, production-ready Chinese image prompts. Treat all planning references as directional input, not final visual targets. Strip spreadsheet grids, PPT annotations, placeholders, arrows, and draft styling from the output. Route ecommerce PDP/detail-page screens to the dedicated PDP contract; route all other supported assets to the existing KV contract.
 
 **Do not generate an image unless the user explicitly requests image generation.**
 
@@ -16,12 +16,18 @@ Convert rough campaign material — screenshots, PPT drafts, text briefs, activi
 This contract overrides stylistic freedom elsewhere in this skill. Follow it exactly.
 
 1. Output only the finished prompt. No analysis, rationale, usage instructions, or closing remarks.
-2. Preserve the field order below. Do not rename, merge, omit, or reorder fields.
+2. For KV, poster, main-image, promotion-image, livestream-background, banner, and activity-page hero requests, preserve the field order below. For PDP/detail-page requests, use the dedicated contract in `references/pdp-planning-to-image2.md` instead.
 3. Keep each prompt concise but concrete enough for image generation.
 4. Use Chinese punctuation and production-oriented visual language.
 5. Do not wrap the prompt in a code block.
 6. Before output, apply the Image2 Wording Sanitization rules to every field, including negative requirements.
 7. Bind every product entity in the finished prompt to its product reference image. Default to the exact possessive form `图1的……`; only use another image number when the user explicitly assigns the product to that image.
+
+## Asset-Type Routing
+
+- **PDP/detail-page branch**: Use when the user asks for `详情页`、`PDP`、`详情长图`、`详情页其中一屏`、`详情页分屏`、卖点说明屏、成分/原理屏、场景适用屏、检测背书屏、痛点屏或使用步骤屏. Read and follow `references/pdp-planning-to-image2.md`. Its output structure overrides the KV field order and KV single-direction template.
+- **Original KV branch**: Keep the existing template below unchanged for 海报、KV、首屏活动KV、主图、推广图、Banner、直播背景和活动页头图. Do not apply the PDP sectioned layout to these assets.
+- **Borderline cases**: Treat a promotional first screen dominated by campaign slogan, product hero and offer information as KV. Treat a screen whose main job is to explain a product benefit, scenario, mechanism, comparison, proof, ingredient or usage step as PDP.
 
 ### Single Direction Template
 
@@ -128,6 +134,7 @@ Do not use euphemisms or placeholders to conceal genuinely unsafe intent. If the
 不同输入类型需要不同的解析策略：
 
 - **截图 / PPT 稿**：识别标题、利益点、时间、LOGO 位置、产品图、场景示意图。忽略表格网格、批注箭头、占位框、白底占位元素和草稿样式。
+- **详情页策划稿 / 单屏线框**：先按 Asset-Type Routing 进入 PDP 分支，再读取 `references/pdp-planning-to-image2.md`。把策划稿的模块、占位图和画外批注反推成完整成品画面，不套用 KV 字段。
 - **纯文本策划**：提取品牌、活动机制、时间、卖点、场景需求。将策划语言翻译为视觉语言（如"满减"→利益点文案区域，"清新"→空气感视觉）。
 - **电商活动笔记**：关注平台、活动阶段（预热/爆发/返场）、促销机制、利益点层级。不同阶段的视觉调性可略有差异（预热偏氛围，爆发偏利益点突出）。
 - **品牌泛需求**（如"做一张超威的KV"）：从品牌规则提取默认方向，补充一个合理的场景和创意机制，输出后提示用户确认或调整。
@@ -135,14 +142,15 @@ Do not use euphemisms or placeholders to conceal genuinely unsafe intent. If the
 
 ## Workflow
 
-1. **识别要素**：从输入中提取品牌、渠道、活动、比例、LOGO、标题、利益点、时间、产品、场景需求、禁止元素；默认将产品参考绑定为图1。
-2. **提取创意**：为每个请求方向提炼一个清晰的视觉创意点——一句话能说清"这张 KV 的核心画面是什么"。
-3. **翻译语言**：将策划语言转化为场景、构图、产品层级、前后景、道具、互动、气氛、字体、色彩、光线和负面要求；对所有产品实体短语应用 `图1的……` 绑定。
-4. **应用品牌规则**：匹配品牌视觉方向。未覆盖品牌按 Input Handling 中的 fallback 处理。
-5. **净化措辞**：对完整草稿执行 Image2 Wording Sanitization 全量扫描，包括负面要求。
-6. **产品引用复核**：逐句扫描产品、产品数量、产品合集、主推/次推产品、产品包装与产品标签等表达，确保全部使用 `图1的……`；用户明确指定其他图片编号时，确保全文编号一致。
-7. **精简压缩**：在不丢失任何必填字段的前提下，将冗长草稿压缩约 30%。
-8. **输出**：仅返回符合强制结构的 prompt，不附加任何说明。
+1. **判定物料类型**：先区分 PDP/detail-page 与 KV/海报/主图/推广图/Banner/直播背景/活动页头图；PDP 读取专用参考合同，其余物料继续执行下列 KV 流程。
+2. **识别要素**：从输入中提取品牌、渠道、活动、比例、LOGO、标题、利益点、时间、产品、场景需求、禁止元素；默认将产品参考绑定为图1。
+3. **提取创意**：为每个请求方向提炼一个清晰的视觉创意点——一句话能说清"这张 KV 的核心画面是什么"。
+4. **翻译语言**：将策划语言转化为场景、构图、产品层级、前后景、道具、互动、气氛、字体、色彩、光线和负面要求；对所有产品实体短语应用 `图1的……` 绑定。
+5. **应用品牌规则**：匹配品牌视觉方向。未覆盖品牌按 Input Handling 中的 fallback 处理。
+6. **净化措辞**：对完整草稿执行 Image2 Wording Sanitization 全量扫描，包括负面要求。
+7. **产品引用复核**：逐句扫描产品、产品数量、产品合集、主推/次推产品、产品包装与产品标签等表达，确保全部使用 `图1的……`；用户明确指定其他图片编号时，确保全文编号一致。
+8. **精简压缩**：KV 分支在不丢失任何必填字段的前提下压缩约 30%；PDP 分支执行专用参考合同的约 50% 精简标准。
+9. **输出**：仅返回符合对应分支强制结构的 prompt，不附加任何说明。
 
 ## Interpretation Priorities
 
