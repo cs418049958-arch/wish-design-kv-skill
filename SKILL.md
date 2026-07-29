@@ -1,9 +1,9 @@
 ---
-name: design-kv-skill
-description: Create concise, production-ready Chinese KV image prompts from campaign briefs, planning screenshots, PPT drafts, ecommerce activity notes, or loose brand requests. Handles ecommerce KV, campaign posters, livestream backgrounds, banners, activity pages, and product promotion images. Automatically neutralizes sensitive wording for Image2 compatibility. Output prompts only unless the user explicitly asks to generate an image.
+name: wish-design-kv-skill
+description: Create concise, production-ready Chinese KV image prompts from campaign briefs, planning screenshots, PPT drafts, ecommerce activity notes, or loose brand requests. Handles ecommerce KV, campaign posters, livestream backgrounds, banners, activity pages, and product promotion images. Bind every product entity in the final prompt to its reference image with wording such as "图1的产品合集", "图1的产品", or "图1的三瓶产品". Automatically neutralizes sensitive wording for Image2 compatibility. Output prompts only unless the user explicitly asks to generate an image.
 ---
 
-# Design KV Skill
+# Wish Design KV Skill
 
 ## Core Task
 
@@ -21,6 +21,7 @@ This contract overrides stylistic freedom elsewhere in this skill. Follow it exa
 4. Use Chinese punctuation and production-oriented visual language.
 5. Do not wrap the prompt in a code block.
 6. Before output, apply the Image2 Wording Sanitization rules to every field, including negative requirements.
+7. Bind every product entity in the finished prompt to its product reference image. Default to the exact possessive form `图1的……`; only use another image number when the user explicitly assigns the product to that image.
 
 ### Single Direction Template
 
@@ -33,7 +34,7 @@ This contract overrides stylistic freedom elsewhere in this skill. Follow it exa
 利益点：《[促销或产品利益点]》
 时间：《[活动时间]》
 
-画面表达：[场景、构图、产品层级、前景、背景、道具、互动、气氛、字体和必要的可视化机制。]
+画面表达：[场景、构图、图1的产品层级、前景、背景、道具、互动、气氛、字体和必要的可视化机制。]
 
 [需要时继续补充1至2个自然段，描述镜头、道具、香气、空气、洁净、守护或人物互动；不要另起新的字段标题。]
 
@@ -67,15 +68,30 @@ Each field in the template follows these rules:
 - **主标题**：沿用策划稿核心文案，不擅自改写数字、时间或促销机制。
 - **利益点**：优先保留最强的一条促销或产品利益点；没有明确利益点时写用户提供的副标题或核心卖点。
 - **时间**：有活动时间则原样保留；没有时写"时间：未提供"，不得省略该字段或编造时间。
-- **画面表达**：必须覆盖场景、产品、构图层级、前后景、关键道具、气氛和标题字体；涉及人物、动物、IP或功效可视化时一并写入。需要时可续写1-2个自然段补充细节，但不另起新字段标题。
+- **画面表达**：必须覆盖场景、图1的产品、构图层级、前后景、关键道具、气氛和标题字体；涉及人物、动物、IP或功效可视化时一并写入。凡是指向参考图中商品主体、数量、组合、主次关系或包装的产品名词短语，都按 Product Reference Binding 规则添加图片编号。需要时可续写1-2个自然段补充细节，但不另起新字段标题。
 - **画面风格**：必须包含图片比例、视觉类型、主辅色、光线和真实度。常见比例：9:16（竖版手机端）、3:4（竖版）、16:9（横版）、1:1（方图）。
-- **负面要求**：必须包含去除PPT感、网格、批注、占位元素，以及产品包装清晰、标题与产品无遮挡；再补充任务特有禁忌。负面要求同样适用净化规则——不要为了说"不要出现..."而重复敏感源词。
+- **负面要求**：必须包含去除PPT感、网格、批注、占位元素，以及 `图1的产品包装清晰`、`标题与图1的产品无遮挡`；再补充任务特有禁忌。负面要求同样适用净化规则——不要为了说"不要出现..."而重复敏感源词。
 
-## Product Collection Handling
+## Product Reference Binding
+
+Treat `图1` as the default product reference image. In the finished prompt, every noun phrase that points to the supplied product, product count, product group, product hierarchy, or package must begin with the possessive image binding `图1的`. Do not omit `的`, and do not use the loose form `图1产品`.
+
+Apply the rule throughout all prompt fields, including visual descriptions and negative requirements:
+
+- `产品` → `图1的产品`
+- `产品合集` → `图1的产品合集`
+- `三瓶产品` → `图1的三瓶产品`
+- `[品牌]产品合集` → `图1的[品牌]产品合集`
+- `主推产品` / `次推产品` → `图1的主推产品` / `图1的次推产品`
+- `产品包装` / `产品标签` → `图1的产品包装` / `图1的产品标签`
+
+Do not add `图1的` to abstract editorial concepts that do not identify the pictured commodity, such as `产品利益点`、`产品宣传KV` or `产品卖点文案`. If the user explicitly states that the product is in another numbered image, replace `图1` with that exact image number consistently; otherwise always use `图1`.
+
+### Product Collection Handling
 
 When the KV contains multiple products, do not lock exact placement. Use this wording or a close equivalent:
 
-> 将[品牌]产品合集放置在[场景]中，产品摆放不固定、有层次，主推产品居中或视觉突出，次推产品自然穿插，产品比例突出、包装清晰。
+> 将图1的[品牌]产品合集放置在[场景]中，图1的产品摆放不固定、有层次，图1的主推产品居中或视觉突出，图1的次推产品自然穿插，图1的产品比例突出、图1的产品包装清晰。
 
 Control hierarchy, scale, prominence, and clarity only. Do not prescribe rigid left-to-right product positions unless the user explicitly requires them.
 
@@ -90,7 +106,7 @@ Apply these rules automatically without asking the user:
 - **医疗/疾病/毒性/病原体/治疗/杀菌/激进功效**：转化为 `专业洁净`、`清洁护理`、`微观洁净概念`、`健康安心感`、`清新环境` 等中性商业表述。
 - **暴力/武器/战斗/灭杀/恐怖虫类/冲击性语言**：转化为 `自然屏障`、`轻防护机制`、`远离干扰`、`洁净链路` 等平和的防护视觉隐喻。
 - **绝对化/极端化宣称及非必要的精确功效数字**：替换为 `核心功效数字信息`、`重点卖点区域` 或 `醒目利益点文案`，保留文字位置而非敏感措辞。
-- **产品包装上的敏感文字**：不转录到 prompt 中，写 `保持图中原包装结构与标签层级，包装清晰`，让参考图承载包装外观。
+- **产品包装上的敏感文字**：不转录到 prompt 中，写 `保持图1的原包装结构与标签层级，图1的产品包装清晰`，让参考图承载包装外观。
 - **最终排版需要的敏感文字**：替换为 `对应文案区域留空，后期排版`，不让 Image2 渲染该文字。
 - **负面要求同样适用**：不要为了说"不要出现..."而重复敏感源词，用中性描述或直接省略。
 
@@ -119,19 +135,20 @@ Do not use euphemisms or placeholders to conceal genuinely unsafe intent. If the
 
 ## Workflow
 
-1. **识别要素**：从输入中提取品牌、渠道、活动、比例、LOGO、标题、利益点、时间、产品、场景需求、禁止元素。
+1. **识别要素**：从输入中提取品牌、渠道、活动、比例、LOGO、标题、利益点、时间、产品、场景需求、禁止元素；默认将产品参考绑定为图1。
 2. **提取创意**：为每个请求方向提炼一个清晰的视觉创意点——一句话能说清"这张 KV 的核心画面是什么"。
-3. **翻译语言**：将策划语言转化为场景、构图、产品层级、前后景、道具、互动、气氛、字体、色彩、光线和负面要求。
+3. **翻译语言**：将策划语言转化为场景、构图、产品层级、前后景、道具、互动、气氛、字体、色彩、光线和负面要求；对所有产品实体短语应用 `图1的……` 绑定。
 4. **应用品牌规则**：匹配品牌视觉方向。未覆盖品牌按 Input Handling 中的 fallback 处理。
 5. **净化措辞**：对完整草稿执行 Image2 Wording Sanitization 全量扫描，包括负面要求。
-6. **精简压缩**：在不丢失任何必填字段的前提下，将冗长草稿压缩约 30%。
-7. **输出**：仅返回符合强制结构的 prompt，不附加任何说明。
+6. **产品引用复核**：逐句扫描产品、产品数量、产品合集、主推/次推产品、产品包装与产品标签等表达，确保全部使用 `图1的……`；用户明确指定其他图片编号时，确保全文编号一致。
+7. **精简压缩**：在不丢失任何必填字段的前提下，将冗长草稿压缩约 30%。
+8. **输出**：仅返回符合强制结构的 prompt，不附加任何说明。
 
 ## Interpretation Priorities
 
 当需求冲突时，按以下顺序取舍：
 
-1. 产品清晰度与包装完整性
+1. 图1的产品清晰度与图1的产品包装完整性
 2. 核心标题、利益点和活动时间
 3. 品牌视觉规则
 4. 活动机制与指定场景
@@ -152,13 +169,13 @@ Do not use euphemisms or placeholders to conceal genuinely unsafe intent. If the
 利益点：《自然超威的》
 时间：《5/21 00:00 - 6/18 23:59》
 
-画面表达：将图1超威产品合集放置在热带雨林近景中，产品摆放不固定、有层次，主推产品居中视觉突出，次推产品自然穿插，产品比例突出、包装清晰。前景有大叶绿植、藤蔓、苔藓石块和雨后水汽，背景有纵深林间光影。
+画面表达：将图1的超威产品合集放置在热带雨林近景中，图1的产品摆放不固定、有层次，图1的主推产品居中视觉突出，图1的次推产品自然穿插，图1的产品比例突出、图1的产品包装清晰。前景有大叶绿植、藤蔓、苔藓石块和雨后水汽，背景有纵深林间光影。
 
-产品周围加入淡蓝绿色防护光圈、空气流线、驱蚊粒子和轻微科技扫描感。变色龙隐藏在枝叶和产品附近，粉色螳螂与产品产生守护或击退蚊虫的互动。
+图1的产品周围加入淡蓝绿色防护光圈、空气流线、驱蚊粒子和轻微科技扫描感。变色龙隐藏在枝叶和图1的产品附近，粉色螳螂与图1的产品产生守护或击退蚊虫的互动。
 
-画面风格：高级电商618竖版KV，3D写实产品合成与热带雨林电影感，比例9:16，主色雨林绿、辅助色防护蓝绿，光线为林间透射光与产品聚光，整体气质自然科技感。
+画面风格：高级电商618竖版KV，图1的产品3D写实合成与热带雨林电影感，比例9:16，主色雨林绿、辅助色防护蓝绿，光线为林间透射光与图1的产品聚光，整体气质自然科技感。
 
-负面要求：不要PPT感、表格感、网格、批注、占位元素；不要水印和草稿痕迹；不要写死产品摆放位置；不要密集蚊虫或恐怖氛围；不要过度卡通；不要弱化产品和标题；产品包装清晰、标题与产品无遮挡。
+负面要求：不要PPT感、表格感、网格、批注、占位元素；不要水印和草稿痕迹；不要写死图1的产品摆放位置；不要密集蚊虫或恐怖氛围；不要过度卡通；不要弱化图1的产品和标题；图1的产品包装清晰、标题与图1的产品无遮挡。
 
 ## Generation Compatibility
 
