@@ -1,4 +1,4 @@
 interface:
-  display_name: "Design KV Skill"
-  short_description: "Create structured, Image2-ready Chinese KV prompts with sensitive wording neutralized."
-  default_prompt: "Use $design-kv-skill to turn this campaign brief into a structured Image2-ready Chinese KV prompt with sensitive wording neutralized."
+  display_name: "Wish Design KV Skill"
+  short_description: "Create Chinese KV prompts with products bound to 图1."
+  default_prompt: "Use $wish-design-kv-skill to turn this campaign brief into a structured Chinese KV prompt and bind every product entity to 图1."
