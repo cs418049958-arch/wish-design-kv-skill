@@ -11,12 +11,20 @@ Convert rough campaign material — screenshots, PPT drafts, text briefs, activi
 
 **Do not generate an image unless the user explicitly requests image generation.**
 
+## Optional Banbana Format
+
+Activate this optional branch whenever the current user clearly asks to replace, convert, rewrite, or output a prompt in Banbana format. Recognize concise wording such as `替换banbana`、`转成banbana`、`改成banbana提示词`、`banbana提示词` or equivalent wording; do not require a fixed sentence. A discussion that merely mentions Banbana without asking for prompt conversion does not activate the branch.
+
+When activated, read and follow `references/banbana-prompt-format.md`. Its single-paragraph output contract overrides the PDP and Original KV templates for that request only. Continue to apply Product Reference Binding, Image2 Wording Sanitization, and the prompt-only output rule.
+
+For every request that does not express Banbana conversion intent, ignore the Banbana reference and preserve the existing PDP/KV routing, templates, fields, and defaults unchanged.
+
 ## Mandatory Output Contract
 
 This contract overrides stylistic freedom elsewhere in this skill. Follow it exactly.
 
 1. Output only the finished prompt. No analysis, rationale, usage instructions, or closing remarks.
-2. For KV, poster, main-image, promotion-image, livestream-background, banner, and activity-page hero requests, preserve the field order below. For PDP/detail-page requests, use the dedicated contract in `references/pdp-planning-to-image2.md` instead.
+2. Unless the explicit Banbana trigger applies, for KV, poster, main-image, promotion-image, livestream-background, banner, and activity-page hero requests, preserve the field order below. For PDP/detail-page requests, use the dedicated contract in `references/pdp-planning-to-image2.md` instead.
 3. Keep each prompt concise but concrete enough for image generation.
 4. Use Chinese punctuation and production-oriented visual language.
 5. Do not wrap the prompt in a code block.
