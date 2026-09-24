@@ -1,13 +1,13 @@
 ---
 name: wish-design-kv-skill
-description: Create production-ready Chinese Image2 prompts from campaign briefs, planning screenshots, PPT drafts, ecommerce activity notes, or loose brand requests. Use the dedicated planning-to-prompt workflow for ecommerce PDP/detail-page screens, including single screens, long-page sections, feature explanation screens, proof screens, and scenario screens. Keep the original structured format for ecommerce KV, campaign posters, main images, promotion images, livestream backgrounds, banners, and activity-page hero visuals. Bind every product entity to its reference image and automatically neutralize incompatible wording. Output prompts only unless the user explicitly asks to generate an image.
+description: Create production-ready Chinese Image2 prompts from campaign briefs, planning screenshots, PPT drafts, ecommerce activity notes, or loose brand requests. Use a dedicated workflow for ecommerce PDP/detail-page screens; use an unlabelled copy layout for main images and promotion images; retain the original structured fields for campaign posters and KV. Bind every product entity to its reference image and automatically neutralize incompatible wording. Output prompts only unless the user explicitly asks to generate an image.
 ---
 
 # Wish Design KV Skill
 
 ## Core Task
 
-Convert rough campaign material — screenshots, PPT drafts, text briefs, activity notes — into concise, production-ready Chinese image prompts. Treat all planning references as directional input, not final visual targets. Strip spreadsheet grids, PPT annotations, placeholders, arrows, and draft styling from the output. Route ecommerce PDP/detail-page screens to the dedicated PDP contract; route all other supported assets to the existing KV contract.
+Convert rough campaign material — screenshots, PPT drafts, text briefs, activity notes — into concise, production-ready Chinese image prompts. Treat all planning references as directional input, not final visual targets. Strip spreadsheet grids, PPT annotations, placeholders, arrows, and draft styling from the output. Route ecommerce PDP/detail-page screens, main/promotion images, and the original KV assets to their respective contracts.
 
 **Do not generate an image unless the user explicitly requests image generation.**
 
@@ -15,16 +15,16 @@ Convert rough campaign material — screenshots, PPT drafts, text briefs, activi
 
 Activate this optional branch whenever the current user clearly asks to replace, convert, rewrite, or output a prompt in Banbana format. Recognize concise wording such as `替换banbana`、`转成banbana`、`改成banbana提示词`、`banbana提示词` or equivalent wording; do not require a fixed sentence. A discussion that merely mentions Banbana without asking for prompt conversion does not activate the branch.
 
-When activated, read and follow `references/banbana-prompt-format.md`. Its single-paragraph output contract overrides the PDP and Original KV templates for that request only. Continue to apply Product Reference Binding, Image2 Wording Sanitization, and the prompt-only output rule.
+When activated, read and follow `references/banbana-prompt-format.md`. Its single-paragraph output contract overrides the PDP, main/promotion-image, and original KV templates for that request only. Continue to apply Product Reference Binding, Image2 Wording Sanitization, and the prompt-only output rule.
 
-For every request that does not express Banbana conversion intent, ignore the Banbana reference and preserve the existing PDP/KV routing, templates, fields, and defaults unchanged.
+For every request that does not express Banbana conversion intent, ignore the Banbana reference and follow the PDP, main/promotion-image, or original KV branch below.
 
 ## Mandatory Output Contract
 
 This contract overrides stylistic freedom elsewhere in this skill. Follow it exactly.
 
 1. Output only the finished prompt. No analysis, rationale, usage instructions, or closing remarks.
-2. Unless the explicit Banbana trigger applies, for KV, poster, main-image, promotion-image, livestream-background, banner, and activity-page hero requests, preserve the field order below. For PDP/detail-page requests, use the dedicated contract in `references/pdp-planning-to-image2.md` instead.
+2. Unless the explicit Banbana trigger applies, use the main/promotion-image template without the four standalone fields `顶部预留：`、`主标题：`、`利益点：`、`时间：` for 主图/推广图. Keep the original field order below for KV, activity posters and other original KV assets. For PDP/detail-page requests, use `references/pdp-planning-to-image2.md`.
 3. Keep each prompt concise but concrete enough for image generation.
 4. Use Chinese punctuation and production-oriented visual language.
 5. Do not wrap the prompt in a code block.
@@ -34,10 +34,11 @@ This contract overrides stylistic freedom elsewhere in this skill. Follow it exa
 ## Asset-Type Routing
 
 - **PDP/detail-page branch**: Use when the user asks for `详情页`、`PDP`、`详情长图`、`详情页其中一屏`、`详情页分屏`、卖点说明屏、成分/原理屏、场景适用屏、检测背书屏、痛点屏或使用步骤屏. Read and follow `references/pdp-planning-to-image2.md`. Its output structure overrides the KV field order and KV single-direction template.
-- **Original KV branch**: Keep the existing template below unchanged for 海报、KV、首屏活动KV、主图、推广图、Banner、直播背景和活动页头图. Do not apply the PDP sectioned layout to these assets.
+- **Main/promotion-image branch**: Use the dedicated template below for `主图`、`推广主图`、`推广图` and equivalent product-focused ecommerce main images. Integrate any provided LOGO, title, selling points, and time into natural visual-description prose; do not emit the four standalone fields. If an asset is described as both an activity poster/KV and a promotion image/main image, follow the user's stated deliverable type; explicit `主图` or `推广图` takes this branch.
+- **Original KV branch**: Keep the existing template below unchanged for 活动海报、海报、KV、首屏活动KV、Banner、直播背景和活动页头图. Do not apply the PDP sectioned layout to these assets.
 - **Borderline cases**: Treat a promotional first screen dominated by campaign slogan, product hero and offer information as KV. Treat a screen whose main job is to explain a product benefit, scenario, mechanism, comparison, proof, ingredient or usage step as PDP.
 
-### Single Direction Template
+### Original KV Single Direction Template
 
 **方案｜[方向名称]**
 
@@ -56,9 +57,23 @@ This contract overrides stylistic freedom elsewhere in this skill. Follow it exa
 
 负面要求：[需要排除的风格、元素、构图问题、包装问题、文字遮挡和草稿痕迹。]
 
+### Main/Promotion-Image Single Direction Template
+
+**方案｜[方向名称]**
+
+这是一张【[品牌/品类/渠道]】[比例]推广主图，主题《[策划稿主标题]》。画面采用[核心场景与视觉机制]，表达[核心卖点]。
+
+画面表达：[在场景和构图描述中自然说明已提供的 LOGO 位置、标题原文及字形、卖点原文及信息层级；有明确时间时也自然说明其位置。描述图1的产品层级、前景、背景、道具、互动及气氛。不得编造缺失文案、时间或标识；不得另起顶部预留、主标题、利益点、时间四个字段。]
+
+[需要时继续补充1至2个自然段，描述镜头、道具、香气、空气、洁净、守护或人物互动；不要另起新的字段标题。]
+
+画面风格：[广告类型、写实或3D方式、比例、主色、辅助色、光线、清晰度与整体气质。]
+
+负面要求：[需要排除的风格、元素、构图问题、包装问题、文字遮挡和草稿痕迹。]
+
 ### Multiple Directions Template
 
-When the user requests two or more visual directions, repeat the complete structure for every direction, separated by a `---` line:
+When the user requests two or more visual directions, repeat the complete structure of the selected branch for every direction, separated by a `---` line:
 
 **方案一｜[方向名称]**
 
@@ -74,14 +89,14 @@ Use Chinese numerals in sequence (方案一、方案二、方案三……). Make
 
 ## Field Specifications
 
-Each field in the template follows these rules:
+Apply the shared rules below to both templates. The rules for `顶部预留`、`主标题`、`利益点`、`时间` as standalone fields apply only to the original KV template; for main/promotion images, include provided copy naturally in `画面表达` without those field labels.
 
 - **方案**：名称应概括场景或创意机制，如"半开放客厅纳凉""蓝天下的花园单车"。不要使用纯品牌名或纯活动名，要有画面感。
 - **主题总述**（模板中"这是一张……"开头的段落）：必须以"这是一张【...】..."开头，2句内说清品牌、活动、比例、场景和表达目的。
 - **顶部预留**：只列需要出现的 LOGO、品牌标识或活动标识；没有信息时写"品牌LOGO｜活动LOGO"。应用净化规则后，敏感机构名替换为"合作方LOGO"。
 - **主标题**：沿用策划稿核心文案，不擅自改写数字、时间或促销机制。
 - **利益点**：优先保留最强的一条促销或产品利益点；没有明确利益点时写用户提供的副标题或核心卖点。
-- **时间**：有活动时间则原样保留；没有时写"时间：未提供"，不得省略该字段或编造时间。
+- **时间**：在原 KV 分支，有活动时间则原样保留；没有时写"时间：未提供"。在主图/推广图分支，仅当提供了时间时才融入画面描述；不得编造时间。
 - **画面表达**：必须覆盖场景、图1的产品、构图层级、前后景、关键道具、气氛和标题字体；涉及人物、动物、IP或功效可视化时一并写入。凡是指向参考图中商品主体、数量、组合、主次关系或包装的产品名词短语，都按 Product Reference Binding 规则添加图片编号。需要时可续写1-2个自然段补充细节，但不另起新字段标题。
 - **画面风格**：必须包含图片比例、视觉类型、主辅色、光线和真实度。常见比例：9:16（竖版手机端）、3:4（竖版）、16:9（横版）、1:1（方图）。
 - **负面要求**：必须包含去除PPT感、网格、批注、占位元素，以及 `图1的产品包装清晰`、`标题与图1的产品无遮挡`；再补充任务特有禁忌。负面要求同样适用净化规则——不要为了说"不要出现..."而重复敏感源词。
@@ -150,14 +165,14 @@ Do not use euphemisms or placeholders to conceal genuinely unsafe intent. If the
 
 ## Workflow
 
-1. **判定物料类型**：先区分 PDP/detail-page 与 KV/海报/主图/推广图/Banner/直播背景/活动页头图；PDP 读取专用参考合同，其余物料继续执行下列 KV 流程。
+1. **判定物料类型**：先区分 PDP/detail-page、主图/推广图、原 KV 资产；PDP 读取专用参考合同，主图/推广图使用无四字段模板，其余物料使用原 KV 模板。
 2. **识别要素**：从输入中提取品牌、渠道、活动、比例、LOGO、标题、利益点、时间、产品、场景需求、禁止元素；默认将产品参考绑定为图1。
 3. **提取创意**：为每个请求方向提炼一个清晰的视觉创意点——一句话能说清"这张 KV 的核心画面是什么"。
 4. **翻译语言**：将策划语言转化为场景、构图、产品层级、前后景、道具、互动、气氛、字体、色彩、光线和负面要求；对所有产品实体短语应用 `图1的……` 绑定。
 5. **应用品牌规则**：匹配品牌视觉方向。未覆盖品牌按 Input Handling 中的 fallback 处理。
 6. **净化措辞**：对完整草稿执行 Image2 Wording Sanitization 全量扫描，包括负面要求。
 7. **产品引用复核**：逐句扫描产品、产品数量、产品合集、主推/次推产品、产品包装与产品标签等表达，确保全部使用 `图1的……`；用户明确指定其他图片编号时，确保全文编号一致。
-8. **精简压缩**：KV 分支在不丢失任何必填字段的前提下压缩约 30%；PDP 分支执行专用参考合同的约 50% 精简标准。
+8. **精简压缩**：原 KV 分支在不丢失任何必填字段的前提下压缩约 30%；主图/推广图分支保留策划提供的文案但不添加四个字段；PDP 分支执行专用参考合同的约 50% 精简标准。
 9. **输出**：仅返回符合对应分支强制结构的 prompt，不附加任何说明。
 
 ## Interpretation Priorities
