@@ -1,4 +1,14 @@
 interface:
-  display_name: "Wish Design KV Skill"
-  short_description: "Create Chinese KV and PDP Image2 prompts."
-  default_prompt: "Use $wish-design-kv-skill to turn this campaign or PDP planning draft into a production-ready Chinese Image2 prompt."
+  display_name: Wish Design KV Skill
+  short_description: Create Chinese KV and PDP Image2 prompts.
+  default_prompt: Use $wish-design-kv-skill to turn this campaign or PDP planning
+    draft into a production-ready Chinese Image2 prompt.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
